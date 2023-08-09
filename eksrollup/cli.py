@@ -221,11 +221,12 @@ def update_asgs(asgs, cluster_name):
                 try:
                     # get the k8s node name instead of instance id
                     node_name = get_node_by_instance_id(k8s_nodes, outdated['InstanceId'])
-                    running_batch_worker_pods = get_running_batch_worker_pods_on_node(node_name)
-                    print(f"\n ====Running Batch Pods on {node_name}====\n{[pod.metadata.name for pod in running_batch_worker_pods]}")
-                    if len(running_batch_worker_pods) > 0:
-                        print(f"Don't drain node: {node_name} yet, there are batch jobs running!")
-                        continue
+                    if "airflow" not in asg_name:
+                        running_batch_worker_pods = get_running_batch_worker_pods_on_node(node_name)
+                        print(f"\n ====Running Batch Pods on {node_name}====\n{[pod.metadata.name for pod in running_batch_worker_pods]}")
+                        if len(running_batch_worker_pods) > 0:
+                            print(f"Don't drain node: {node_name} yet, there are batch jobs running!")
+                            continue
                     desired_asg_capacity -= 1
                     drain_node(node_name)
                     delete_node(node_name)
