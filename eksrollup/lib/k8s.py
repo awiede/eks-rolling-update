@@ -55,11 +55,12 @@ def get_running_batch_worker_pods_on_node(node_name):
     Returns a list of running batch worker pods on a given node
     """
     v1 = client.CoreV1Api()
-    return v1.list_pod_for_all_namespaces(
+    response = v1.list_pod_for_all_namespaces(
         watch=False,
         label_selector="app=batch-deploy",
         field_selector=f"status.phase=Running,spec.nodeName={node_name}"
     )
+    return response.items
 
 
 def get_node_by_instance_id(k8s_nodes, instance_id):
