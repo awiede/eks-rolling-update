@@ -226,6 +226,8 @@ def update_asgs(asgs, cluster_name):
                         logger.info(f"\n ====Running Batch Pods on {node_name}====\n{[pod.metadata.name for pod in running_batch_worker_pods]}")
                         if len(running_batch_worker_pods) > 0:
                             logger.info(f"Don't drain node: {node_name} yet, there are batch jobs running!")
+                            logger.info("Waiting for batch jobs to finish, sleeping for 60 seconds")
+                            time.sleep(60)
                             continue
                     desired_asg_capacity -= 1
                     drain_node(node_name)
@@ -246,8 +248,6 @@ def update_asgs(asgs, cluster_name):
                 except Exception as drain_exception:
                     logger.info(drain_exception)
                     raise RollingUpdateException("Rolling update on ASG failed", asg_name)
-            logger.info("Waiting for batch jobs to finish, sleeping for 60 seconds")
-            time.sleep(60)
 
         # scaling cluster back down
         logger.info("Scaling asg back down to original state")
