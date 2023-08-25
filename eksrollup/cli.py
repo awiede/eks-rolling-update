@@ -264,14 +264,6 @@ def update_asgs(asgs, cluster_name):
     logger.info('All asgs processed')
 
 
-def wait_for_batch_workload_completion():
-    """
-    Batch job pods are not safe to terminate and relaunch on new nodes due to idempotency concerns, therefore we should
-    cordon batch nodes and wait for all jobs on a node to terminate before draining the node.
-    """
-    pass
-
-
 def main(args=None):
     parser = argparse.ArgumentParser(description='Rolling update on cluster')
     parser.add_argument('--cluster_name', '-c', required=True,
